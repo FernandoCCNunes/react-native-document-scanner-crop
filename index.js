@@ -262,7 +262,7 @@ class DocumentScanner extends Component {
     return (
       <View style={styles.container} onLayout={this._handleLayout}>
         {/* Camera */}
-        {photo.uri === null && (
+        {photo === null && (
           <RNCamera
             style={styles.camera}
             type={RNCamera.Constants.Type.back}
@@ -283,7 +283,7 @@ class DocumentScanner extends Component {
         )}
 
         {/* Photo */}
-        {photo.uri !== null && (
+        {photo !== null && (
           <Image
             source={{ uri: photo.uri }}
             resizeMode={Platform.OS === "ios" ? "stretch" : "cover"}
@@ -329,7 +329,7 @@ class DocumentScanner extends Component {
         ))}
 
         {/* Zoom on point holding */}
-        {photo.uri !== null && (
+        {photo !== null && (
           <View
             style={[
               styles.zoomContainer,
