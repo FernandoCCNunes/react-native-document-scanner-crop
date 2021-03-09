@@ -44,6 +44,10 @@ class DocumentScanner extends Component {
     };
   }
 
+  getBase64 = () => {
+    return this.state.photo?.base64;
+  }
+
   /**
    * Allow to restart and scan document again
    */
@@ -227,12 +231,12 @@ class DocumentScanner extends Component {
 
     // capture photo
     const options = {
-      base64: false,
+      base64: true,
       fixOrientation: true,
       pauseAfterCapture: true,
       orientation: "portrait",
     };
-    const { uri } = await camera.takePictureAsync(options);
+    const { uri, base64 } = await camera.takePictureAsync(options);
 
     // attempt to identify document from opencv
     const points = await RNDocumentScanner.detectEdges(
@@ -241,7 +245,7 @@ class DocumentScanner extends Component {
     );
 
     // update state
-    this.setState({ photo: uri, points }, () => {
+    this.setState({ photo: {uri, base64}, points }, () => {
       // callback from props
       this.props.onEndCapture();
     });
@@ -258,7 +262,7 @@ class DocumentScanner extends Component {
     return (
       <View style={styles.container} onLayout={this._handleLayout}>
         {/* Camera */}
-        {photo === null && (
+        {photo.uri === null && (
           <RNCamera
             style={styles.camera}
             type={RNCamera.Constants.Type.back}
@@ -279,9 +283,9 @@ class DocumentScanner extends Component {
         )}
 
         {/* Photo */}
-        {photo !== null && (
+        {photo.uri !== null && (
           <Image
-            source={{ uri: photo }}
+            source={{ uri: photo.uri }}
             resizeMode={Platform.OS === "ios" ? "stretch" : "cover"}
             style={{
               width: containerWidth,
@@ -325,7 +329,7 @@ class DocumentScanner extends Component {
         ))}
 
         {/* Zoom on point holding */}
-        {photo !== null && (
+        {photo.uri !== null && (
           <View
             style={[
               styles.zoomContainer,
@@ -338,7 +342,7 @@ class DocumentScanner extends Component {
           >
             {/* Image */}
             <Image
-              source={{ uri: photo }}
+              source={{ uri: photo.uri }}
               resizeMode={Platform.OS === "ios" ? "stretch" : "cover"}
               style={[
                 {
